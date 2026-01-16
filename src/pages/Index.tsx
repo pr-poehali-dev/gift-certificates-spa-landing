@@ -187,20 +187,20 @@ export default function Index() {
 
       <section className="pt-32 pb-20 px-4 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-nature-300 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-sand-300 rounded-full blur-3xl"></div>
+          <div className="absolute top-20 left-10 w-72 h-72 bg-nature-300 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-sand-300 rounded-full blur-3xl animate-float" style={{ animationDelay: '1.5s' }}></div>
         </div>
-        <div className="container mx-auto text-center relative z-10 animate-fade-in">
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-sand-500 mb-6">
+        <div className="container mx-auto text-center relative z-10">
+          <h2 className="text-5xl md:text-7xl font-heading font-bold text-sand-500 mb-6 animate-hero-title">
             Подарите моменты<br />истинного релакса
           </h2>
-          <p className="text-xl md:text-2xl text-sand-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-sand-600 mb-8 max-w-2xl mx-auto animate-hero-subtitle">
             Подарочные сертификаты на традиционный тайский массаж и SPA-процедуры
           </p>
           <Button 
             size="lg" 
             onClick={() => scrollToSection('order')}
-            className="bg-sand-400 hover:bg-sand-500 text-white px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all"
+            className="bg-sand-400 hover:bg-sand-500 text-white px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all animate-hero-button"
           >
             Заказать сертификат
           </Button>
