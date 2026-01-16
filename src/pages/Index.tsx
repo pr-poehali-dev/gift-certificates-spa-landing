@@ -91,6 +91,13 @@ export default function Index() {
     phone: '',
     program: ''
   });
+  const [statsVisible, setStatsVisible] = useState(false);
+  const [animatedStats, setAnimatedStats] = useState({
+    clients: 0,
+    sessions: 0,
+    satisfaction: 0,
+    years: 0
+  });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -99,6 +106,50 @@ export default function Index() {
     }, 5000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const statsSection = document.getElementById('stats');
+      if (statsSection && !statsVisible) {
+        const rect = statsSection.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.8) {
+          setStatsVisible(true);
+        }
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [statsVisible]);
+
+  useEffect(() => {
+    if (statsVisible) {
+      const targets = { clients: 2500, sessions: 15000, satisfaction: 98, years: 7 };
+      const duration = 2000;
+      const steps = 60;
+      const interval = duration / steps;
+
+      let currentStep = 0;
+      const timer = setInterval(() => {
+        currentStep++;
+        const progress = currentStep / steps;
+        
+        setAnimatedStats({
+          clients: Math.floor(targets.clients * progress),
+          sessions: Math.floor(targets.sessions * progress),
+          satisfaction: Math.floor(targets.satisfaction * progress),
+          years: Math.floor(targets.years * progress)
+        });
+
+        if (currentStep >= steps) {
+          clearInterval(timer);
+          setAnimatedStats(targets);
+        }
+      }, interval);
+
+      return () => clearInterval(timer);
+    }
+  }, [statsVisible]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -281,6 +332,41 @@ export default function Index() {
                   }`}
                 />
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="stats" className="py-20 px-4 bg-gradient-to-r from-sand-400 to-nature-400 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+        </div>
+        <div className="container mx-auto relative z-10">
+          <div className="grid md:grid-cols-4 gap-8 text-center">
+            <div className="animate-scale-in">
+              <div className="text-5xl md:text-6xl font-heading font-bold text-white mb-2">
+                {animatedStats.clients.toLocaleString()}+
+              </div>
+              <p className="text-white/90 text-lg">Довольных клиентов</p>
+            </div>
+            <div className="animate-scale-in" style={{ animationDelay: '0.1s' }}>
+              <div className="text-5xl md:text-6xl font-heading font-bold text-white mb-2">
+                {animatedStats.sessions.toLocaleString()}+
+              </div>
+              <p className="text-white/90 text-lg">Проведённых сеансов</p>
+            </div>
+            <div className="animate-scale-in" style={{ animationDelay: '0.2s' }}>
+              <div className="text-5xl md:text-6xl font-heading font-bold text-white mb-2">
+                {animatedStats.satisfaction}%
+              </div>
+              <p className="text-white/90 text-lg">Удовлетворённость</p>
+            </div>
+            <div className="animate-scale-in" style={{ animationDelay: '0.3s' }}>
+              <div className="text-5xl md:text-6xl font-heading font-bold text-white mb-2">
+                {animatedStats.years}+
+              </div>
+              <p className="text-white/90 text-lg">Лет опыта</p>
             </div>
           </div>
         </div>
