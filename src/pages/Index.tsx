@@ -85,6 +85,12 @@ export default function Index() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [currentGalleryImage, setCurrentGalleryImage] = useState(0);
+  const [quickBookingOpen, setQuickBookingOpen] = useState(false);
+  const [quickBookingData, setQuickBookingData] = useState({
+    name: '',
+    phone: '',
+    program: ''
+  });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -108,6 +114,20 @@ export default function Index() {
       program: '',
       message: ''
     });
+  };
+
+  const handleQuickBooking = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({
+      title: "Записаны!",
+      description: "Ждём вас в СенСай SPA. Мы позвоним для уточнения времени.",
+    });
+    setQuickBookingData({
+      name: '',
+      phone: '',
+      program: ''
+    });
+    setQuickBookingOpen(false);
   };
 
   const scrollToSection = (id: string) => {
@@ -545,23 +565,98 @@ export default function Index() {
         </div>
       </footer>
 
-      <a
-        href="https://t.me/yourusername"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 w-16 h-16 bg-[#0088cc] hover:bg-[#0077b5] rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 animate-scale-in z-50 group"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          className="w-8 h-8 text-white"
-          fill="currentColor"
+      <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-50">
+        <button
+          onClick={() => setQuickBookingOpen(true)}
+          className="w-16 h-16 bg-nature-400 hover:bg-nature-500 rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 animate-scale-in group"
         >
-          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.941z" />
-        </svg>
-        <span className="absolute bottom-full right-0 mb-2 px-3 py-1 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-          Написать в Telegram
-        </span>
-      </a>
+          <Icon name="Calendar" size={28} className="text-white" />
+          <span className="absolute bottom-full right-0 mb-2 px-3 py-1 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+            Быстрая запись
+          </span>
+        </button>
+
+        <a
+          href="https://t.me/yourusername"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-16 h-16 bg-[#0088cc] hover:bg-[#0077b5] rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 animate-scale-in group"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="w-8 h-8 text-white"
+            fill="currentColor"
+          >
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.941z" />
+          </svg>
+          <span className="absolute bottom-full right-0 mb-2 px-3 py-1 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+            Написать в Telegram
+          </span>
+        </a>
+      </div>
+
+      <Dialog open={quickBookingOpen} onOpenChange={setQuickBookingOpen}>
+        <DialogContent className="max-w-md">
+          <div className="p-2">
+            <h3 className="text-2xl font-heading font-bold text-sand-500 mb-2">Быстрая запись</h3>
+            <p className="text-sand-600 mb-6">Оставьте ваши контакты, и мы перезвоним в течение 15 минут</p>
+            
+            <form onSubmit={handleQuickBooking} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="quickName">Ваше имя</Label>
+                <Input
+                  id="quickName"
+                  value={quickBookingData.name}
+                  onChange={(e) => setQuickBookingData({ ...quickBookingData, name: e.target.value })}
+                  required
+                  placeholder="Введите ваше имя"
+                  className="border-sand-300"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="quickPhone">Телефон</Label>
+                <Input
+                  id="quickPhone"
+                  type="tel"
+                  value={quickBookingData.phone}
+                  onChange={(e) => setQuickBookingData({ ...quickBookingData, phone: e.target.value })}
+                  required
+                  placeholder="+7 (___) ___-__-__"
+                  className="border-sand-300"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="quickProgram">Программа</Label>
+                <Select 
+                  value={quickBookingData.program} 
+                  onValueChange={(value) => setQuickBookingData({ ...quickBookingData, program: value })} 
+                  required
+                >
+                  <SelectTrigger className="border-sand-300">
+                    <SelectValue placeholder="Выберите программу" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {programs.map((program) => (
+                      <SelectItem key={program.id} value={program.title}>
+                        {program.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button 
+                type="submit" 
+                className="w-full bg-nature-400 hover:bg-nature-500 text-white py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all"
+              >
+                Записаться
+              </Button>
+            </form>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
