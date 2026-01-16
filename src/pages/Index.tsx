@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
 
@@ -35,6 +36,29 @@ const programs = [
   }
 ];
 
+const galleryImages = [
+  {
+    id: 1,
+    url: 'https://cdn.poehali.dev/projects/b50b49c9-992d-4232-9b84-9d968aa3b2c7/files/1b9eff11-499a-4831-8e9b-82526cf6ebf6.jpg',
+    title: 'Атмосфера релакса'
+  },
+  {
+    id: 2,
+    url: 'https://cdn.poehali.dev/projects/b50b49c9-992d-4232-9b84-9d968aa3b2c7/files/8112522c-57c3-448e-9da9-e8db0989ae92.jpg',
+    title: 'Массажный кабинет'
+  },
+  {
+    id: 3,
+    url: 'https://cdn.poehali.dev/projects/b50b49c9-992d-4232-9b84-9d968aa3b2c7/files/7c969e87-b558-4c68-b064-d4819f3cbab6.jpg',
+    title: 'Зона отдыха'
+  },
+  {
+    id: 4,
+    url: 'https://cdn.poehali.dev/projects/b50b49c9-992d-4232-9b84-9d968aa3b2c7/files/a7db6403-6b7f-4898-9a8d-159b1b9ccf7a.jpg',
+    title: 'Процедурная'
+  }
+];
+
 const benefits = [
   { icon: 'Heart', title: 'Снятие стресса', description: 'Глубокая релаксация и восстановление нервной системы' },
   { icon: 'Sparkles', title: 'Улучшение циркуляции', description: 'Активизация кровотока и лимфодренажа' },
@@ -57,7 +81,18 @@ export default function Index() {
     program: '',
     message: ''
   });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [currentGalleryImage, setCurrentGalleryImage] = useState(0);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % programs.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,6 +112,20 @@ export default function Index() {
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    setMobileMenuOpen(false);
+  };
+
+  const openGallery = (index: number) => {
+    setCurrentGalleryImage(index);
+    setGalleryOpen(true);
+  };
+
+  const nextGalleryImage = () => {
+    setCurrentGalleryImage((prev) => (prev + 1) % galleryImages.length);
+  };
+
+  const prevGalleryImage = () => {
+    setCurrentGalleryImage((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
   };
 
   return (
@@ -84,14 +133,36 @@ export default function Index() {
       <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md shadow-sm z-50">
         <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl md:text-3xl font-heading font-bold text-sand-500">СенСай SPA</h1>
+          
           <div className="hidden md:flex gap-6">
             <button onClick={() => scrollToSection('programs')} className="text-sand-600 hover:text-sand-500 transition-colors">Программы</button>
             <button onClick={() => scrollToSection('benefits')} className="text-sand-600 hover:text-sand-500 transition-colors">Преимущества</button>
+            <button onClick={() => scrollToSection('gallery')} className="text-sand-600 hover:text-sand-500 transition-colors">Галерея</button>
             <button onClick={() => scrollToSection('testimonials')} className="text-sand-600 hover:text-sand-500 transition-colors">Отзывы</button>
             <button onClick={() => scrollToSection('order')} className="text-sand-600 hover:text-sand-500 transition-colors">Купить сертификат</button>
             <button onClick={() => scrollToSection('contacts')} className="text-sand-600 hover:text-sand-500 transition-colors">Контакты</button>
           </div>
+
+          <button 
+            className="md:hidden p-2 text-sand-500"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <Icon name={mobileMenuOpen ? "X" : "Menu"} size={28} />
+          </button>
         </nav>
+
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-white border-t border-sand-200 animate-fade-in">
+            <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
+              <button onClick={() => scrollToSection('programs')} className="text-left text-sand-600 hover:text-sand-500 transition-colors py-2">Программы</button>
+              <button onClick={() => scrollToSection('benefits')} className="text-left text-sand-600 hover:text-sand-500 transition-colors py-2">Преимущества</button>
+              <button onClick={() => scrollToSection('gallery')} className="text-left text-sand-600 hover:text-sand-500 transition-colors py-2">Галерея</button>
+              <button onClick={() => scrollToSection('testimonials')} className="text-left text-sand-600 hover:text-sand-500 transition-colors py-2">Отзывы</button>
+              <button onClick={() => scrollToSection('order')} className="text-left text-sand-600 hover:text-sand-500 transition-colors py-2">Купить сертификат</button>
+              <button onClick={() => scrollToSection('contacts')} className="text-left text-sand-600 hover:text-sand-500 transition-colors py-2">Контакты</button>
+            </div>
+          </div>
+        )}
       </header>
 
       <section className="pt-32 pb-20 px-4 relative overflow-hidden">
@@ -124,35 +195,73 @@ export default function Index() {
           <p className="text-center text-sand-600 mb-12 max-w-2xl mx-auto">
             Каждая программа разработана для достижения гармонии тела и разума
           </p>
-          <div className="grid md:grid-cols-3 gap-8">
-            {programs.map((program, index) => (
-              <Card 
-                key={program.id} 
-                className="overflow-hidden hover:shadow-2xl transition-shadow duration-300 animate-fade-in border-sand-200"
-                style={{ animationDelay: `${index * 0.1}s` }}
+
+          <div className="relative max-w-4xl mx-auto">
+            <div className="overflow-hidden rounded-3xl">
+              <div 
+                className="flex transition-transform duration-700 ease-in-out"
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
               >
-                <div className="h-64 overflow-hidden">
-                  <img 
-                    src={program.image} 
-                    alt={program.title}
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-2xl font-heading text-sand-500">{program.title}</CardTitle>
-                  <CardDescription className="text-sand-600 flex justify-between items-center">
-                    <span className="flex items-center gap-1">
-                      <Icon name="Clock" size={16} />
-                      {program.duration}
-                    </span>
-                    <span className="text-xl font-bold text-nature-400">{program.price}</span>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sand-600">{program.description}</p>
-                </CardContent>
-              </Card>
-            ))}
+                {programs.map((program) => (
+                  <div key={program.id} className="w-full flex-shrink-0">
+                    <Card className="border-0 shadow-2xl">
+                      <div className="grid md:grid-cols-2">
+                        <div className="h-80 md:h-auto overflow-hidden">
+                          <img 
+                            src={program.image} 
+                            alt={program.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="p-8 flex flex-col justify-center">
+                          <CardTitle className="text-3xl font-heading text-sand-500 mb-4">{program.title}</CardTitle>
+                          <CardDescription className="text-sand-600 flex items-center gap-4 mb-4 text-lg">
+                            <span className="flex items-center gap-2">
+                              <Icon name="Clock" size={20} />
+                              {program.duration}
+                            </span>
+                            <span className="text-2xl font-bold text-nature-400">{program.price}</span>
+                          </CardDescription>
+                          <p className="text-sand-600 text-lg mb-6">{program.description}</p>
+                          <Button 
+                            onClick={() => scrollToSection('order')}
+                            className="bg-sand-400 hover:bg-sand-500 text-white w-full"
+                          >
+                            Выбрать программу
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <button 
+              onClick={() => setCurrentSlide((prev) => (prev - 1 + programs.length) % programs.length)}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all"
+            >
+              <Icon name="ChevronLeft" size={24} className="text-sand-500" />
+            </button>
+            
+            <button 
+              onClick={() => setCurrentSlide((prev) => (prev + 1) % programs.length)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all"
+            >
+              <Icon name="ChevronRight" size={24} className="text-sand-500" />
+            </button>
+
+            <div className="flex justify-center gap-2 mt-6">
+              {programs.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    currentSlide === index ? 'bg-sand-400 w-8' : 'bg-sand-200'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -180,7 +289,67 @@ export default function Index() {
         </div>
       </section>
 
-      <section id="testimonials" className="py-20 px-4 bg-white">
+      <section id="gallery" className="py-20 px-4 bg-white">
+        <div className="container mx-auto">
+          <h3 className="text-4xl md:text-5xl font-heading font-bold text-center text-sand-500 mb-4 animate-fade-in">
+            Атмосфера нашего СПА
+          </h3>
+          <p className="text-center text-sand-600 mb-12 max-w-2xl mx-auto">
+            Погрузитесь в мир спокойствия и гармонии
+          </p>
+          <div className="grid md:grid-cols-4 gap-4 max-w-6xl mx-auto">
+            {galleryImages.map((image, index) => (
+              <div 
+                key={image.id}
+                onClick={() => openGallery(index)}
+                className="relative overflow-hidden rounded-2xl cursor-pointer group animate-scale-in hover-scale"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <img 
+                  src={image.url} 
+                  alt={image.title}
+                  className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <p className="text-white font-heading font-semibold">{image.title}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <Dialog open={galleryOpen} onOpenChange={setGalleryOpen}>
+        <DialogContent className="max-w-6xl w-full p-0 bg-black/95 border-0">
+          <div className="relative">
+            <img 
+              src={galleryImages[currentGalleryImage].url} 
+              alt={galleryImages[currentGalleryImage].title}
+              className="w-full h-[80vh] object-contain"
+            />
+            <button 
+              onClick={prevGalleryImage}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all"
+            >
+              <Icon name="ChevronLeft" size={24} className="text-white" />
+            </button>
+            <button 
+              onClick={nextGalleryImage}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all"
+            >
+              <Icon name="ChevronRight" size={24} className="text-white" />
+            </button>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-lg font-heading">
+              {galleryImages[currentGalleryImage].title}
+            </div>
+            <div className="absolute bottom-4 right-4 text-white/60 text-sm">
+              {currentGalleryImage + 1} / {galleryImages.length}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <section id="testimonials" className="py-20 px-4 bg-gradient-to-b from-sand-50 to-nature-50">
         <div className="container mx-auto">
           <h3 className="text-4xl md:text-5xl font-heading font-bold text-center text-sand-500 mb-16 animate-fade-in">
             Отзывы наших клиентов
@@ -209,7 +378,7 @@ export default function Index() {
         </div>
       </section>
 
-      <section id="order" className="py-20 px-4 bg-gradient-to-b from-nature-50 to-sand-100">
+      <section id="order" className="py-20 px-4 bg-white">
         <div className="container mx-auto max-w-2xl">
           <h3 className="text-4xl md:text-5xl font-heading font-bold text-center text-sand-500 mb-4 animate-fade-in">
             Заказать сертификат
@@ -308,7 +477,7 @@ export default function Index() {
         </div>
       </section>
 
-      <section id="contacts" className="py-20 px-4 bg-white">
+      <section id="contacts" className="py-20 px-4 bg-gradient-to-b from-sand-50 to-nature-50">
         <div className="container mx-auto max-w-4xl">
           <h3 className="text-4xl md:text-5xl font-heading font-bold text-center text-sand-500 mb-12 animate-fade-in">
             Контакты
