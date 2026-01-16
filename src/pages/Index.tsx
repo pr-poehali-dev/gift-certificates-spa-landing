@@ -544,6 +544,24 @@ export default function Index() {
           <p className="text-sand-200 text-sm mt-4">© 2024 СенСай SPA. Все права защищены.</p>
         </div>
       </footer>
+
+      <a
+        href="https://t.me/yourusername"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 w-16 h-16 bg-[#0088cc] hover:bg-[#0077b5] rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 animate-scale-in z-50 group"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          className="w-8 h-8 text-white"
+          fill="currentColor"
+        >
+          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.941z" />
+        </svg>
+        <span className="absolute bottom-full right-0 mb-2 px-3 py-1 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+          Написать в Telegram
+        </span>
+      </a>
     </div>
   );
 }
